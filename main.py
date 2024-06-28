@@ -1,27 +1,37 @@
 import os
-import time
 from dotenv import load_dotenv
 
 import telebot
+from telebot import types
 
+from utils import RESOURCES
 
 load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
-RETRY_PERIOD = 30
 bot = telebot.TeleBot(TOKEN)
+
+
+def generate_keyboard():
+    markup = types.InlineKeyboardMarkup()
+    for title in RESOURCES:
+        button = types.InlineKeyboardButton(
+            text=title,
+            callback_data=f'parse_{title}'
+        )
+        markup.add(button)
+    return markup
 
 
 @bot.message_handler(commands=['start'])
 def start(message):
     chat_id = message.chat.id
-    while True:
-        try:
-            bot.send_message(chat_id, 'Привет')
-        except:
-            bot.send_message(chat_id, 'Произошла ошибка, попробуйте позже')
-        finally:
-            time.sleep(RETRY_PERIOD)
+    bot.send_message(
+        chat_id,
+        'Выберите платформу: ',
+        reply_markup=generate_keyboard()
+    )
 
 
-bot.polling()
+if __name__ == '__main__':
+    bot.polling()
