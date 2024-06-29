@@ -10,17 +10,21 @@ from bs4 import BeautifulSoup
 load_dotenv()
 RESOURCES = {
     'fl.ru': '',
-    'habr-freelance': '',
+    'habr-freelance': os.getenv('HABR'),
     'hh.ru': os.getenv('HH')
 }
 HEADERS = {'User-Agent': os.getenv('USER_AGENT')}
 
 
+def get_soup_response(site_url):
+    """The function takes a page url and returns a soup object."""
+    response = requests.get(RESOURCES[site_url], headers=HEADERS)
+    return BeautifulSoup(response.text, 'html.parser')
+
 # Parse functions
 def get_data_from_hh():
     """Parsing first page of HH with Python filter."""
-    response = requests.get(RESOURCES['hh.ru'], headers=HEADERS)
-    soup = BeautifulSoup(response.text, 'html.parser')
+    soup = get_soup_response('hh.ru')
     element_class = 'vacancy-card--z_UXteNo7bRGzxWVcL7y font-inter'
     title_class = 'vacancy-name--c1Lay3KouCl7XasYakLk serp-item__title-link'
     link_class = 'bloko-link'
@@ -37,6 +41,11 @@ def get_data_from_hh():
     return result_message
 
 
+def get_data_from_habr():
+    soup = get_soup_response('habr-freelance')
+    return soup
+
+
 # Keyboards
 def generate_keyboard():
     """Site selection keyboard."""
@@ -48,3 +57,7 @@ def generate_keyboard():
         )
         markup.add(button)
     return markup
+
+
+if __name__ == '__main__':
+    print(get_data_from_habr())
