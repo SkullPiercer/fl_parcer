@@ -43,7 +43,14 @@ def get_data_from_hh():
 
 def get_data_from_habr():
     soup = get_soup_response('habr-freelance')
-    return soup
+    posts = soup.find_all('div', class_='task__title')
+    preurl = 'https://freelance.habr.com'
+    result_message = ''
+    for post in posts:
+        href = post.findNext("a").get("href")
+        result_message += f'[{post.text}]({preurl + href})\n'
+    return result_message
+
 
 
 # Keyboards

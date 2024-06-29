@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 import telebot
 
-from utils import generate_keyboard, get_data_from_hh
+from utils import generate_keyboard, get_data_from_habr, get_data_from_hh
 
 
 load_dotenv()
@@ -28,7 +28,7 @@ def send_posts(call):
     """Sends vacancies with links."""
     sites = {
         'fl.ru': ...,
-        'habr-freelance': ...,
+        'habr-freelance': get_data_from_habr(),
         'hh.ru': get_data_from_hh()
     }
     chat_id = call.message.chat.id
