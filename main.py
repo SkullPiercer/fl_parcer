@@ -31,18 +31,25 @@ def start(message):
 @bot.callback_query_handler(func=lambda call: call.data.startswith('parse_'))
 def send_posts(call):
     """Sends vacancies with links."""
-    sites = {
-        'fl.ru': get_data_from_fl(),
-        'habr-freelance': get_data_from_habr(),
-        'hh.ru': get_data_from_hh()
-    }
     chat_id = call.message.chat.id
-    posts = sites[call.data.split('_')[1]]
-    bot.send_message(
-        chat_id,
-        posts,
-        parse_mode='Markdown'
-    )
+    try:
+        sites = {
+            'fl.ru': get_data_from_fl(),
+            'habr-freelance': get_data_from_habr(),
+            'hh.ru': get_data_from_hh()
+        }
+        posts = sites[call.data.split('_')[1]]
+        bot.send_message(
+            chat_id,
+            posts,
+            parse_mode='Markdown'
+        )
+    except:
+        message = 'Произошла непредвиденная ошибка, попробуйте позже ):'
+        bot.send_message(
+            chat_id,
+            message
+        )
 
 
 if __name__ == '__main__':
