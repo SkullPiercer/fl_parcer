@@ -5,11 +5,10 @@ from dotenv import load_dotenv
 from telebot import types
 from bs4 import BeautifulSoup
 
-
 # Service variables
 load_dotenv()
 RESOURCES = {
-    'fl.ru': '',
+    'fl.ru': os.getenv('FLRU'),
     'habr-freelance': os.getenv('HABR'),
     'hh.ru': os.getenv('HH')
 }
@@ -20,6 +19,7 @@ def get_soup_response(site_url):
     """The function takes a page url and returns a soup object."""
     response = requests.get(RESOURCES[site_url], headers=HEADERS)
     return BeautifulSoup(response.text, 'html.parser')
+
 
 # Parse functions
 def get_data_from_hh():
@@ -52,6 +52,17 @@ def get_data_from_habr():
     return result_message
 
 
+def get_data_from_fl():
+    soup = get_soup_response('fl.ru')
+    posts = soup.find_all('h2', class_='title')
+    preurl = 'https://freelance.ru/'
+    result_message = ''
+    for post in posts:
+        href = post.findNext("a").get("href")
+        post = ' '.join(post.text.split())
+        result_message += f'[{post}]({preurl + href})\n'
+    return result_message
+
 
 # Keyboards
 def generate_keyboard():
@@ -67,4 +78,4 @@ def generate_keyboard():
 
 
 if __name__ == '__main__':
-    print(get_data_from_habr())
+    print(get_data_from_fl())
