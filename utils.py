@@ -76,6 +76,3 @@ def generate_keyboard():
         markup.add(button)
     return markup
 
-
-if __name__ == '__main__':
-    print(get_data_from_fl())
